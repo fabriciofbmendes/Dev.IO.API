@@ -45,7 +45,7 @@ namespace DevIO.Api.Controllers
 
             if(!result) return BadRequest();
 
-            return Ok(fornecedor);
+            return Ok(_mapper.Map<FornecedorViewModel>(fornecedor));
         }
 
         [HttpPut("{id:guid}")]
