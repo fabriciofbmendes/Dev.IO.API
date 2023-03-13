@@ -73,15 +73,15 @@ namespace DevIO.Api.Controllers
 
         private bool UploadArquivo(string arquivo,string imgNome)
         {
-            var imageDataByteArray = Convert.FromBase64String(arquivo);
 
             if (string.IsNullOrEmpty(arquivo))
             {
                 NotificarErro("Forneça uma imagem para este produto!");
                 return false;
             }
+            var imageDataByteArray = Convert.FromBase64String(arquivo);
 
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/imagens", imgNome);
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/app/demo-webapi/src/assets", imgNome);
 
             if (System.IO.File.Exists(filePath))
             {
