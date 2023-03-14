@@ -4,7 +4,7 @@ namespace DevIO.Api.Configuration
 {
     public static class ApiConfig
     {
-        public static IServiceCollection WebApiConfig(this IServiceCollection services)
+        public static IServiceCollection AddWebApiConfig(this IServiceCollection services)
         {
 
             services.AddControllers();

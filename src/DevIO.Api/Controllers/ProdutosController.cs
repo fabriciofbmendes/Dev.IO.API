@@ -81,12 +81,12 @@ namespace DevIO.Api.Controllers
             }
         }
 
-        [RequestSizeLimit(40000000)]
-        [HttpPost("imagem")]
-        public async Task<ActionResult> AdicionarImagem(IFormFile file)
-        {
-            return Ok(file);
-        }
+        //[RequestSizeLimit(40000000)]
+        //[HttpPost("imagem")]
+        //public async Task<ActionResult> AdicionarImagem(IFormFile file)
+        //{
+        //    return Ok(file);
+        //}
 
 
         [HttpDelete("{id:guid}")]
