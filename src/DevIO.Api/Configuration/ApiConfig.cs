@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DevIO.Api.Extensions;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DevIO.Api.Configuration
 {
@@ -22,11 +23,17 @@ namespace DevIO.Api.Configuration
 
         public static IApplicationBuilder UseWebApiConfig(this WebApplication app)
         {
+            app.UseMiddleware<ExceptionMiddleware>();
+
             app.UseHttpsRedirection();
+
+            app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseCors("Development");
 
-            app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {

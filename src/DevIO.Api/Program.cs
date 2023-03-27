@@ -27,6 +27,7 @@ else
 {
     app.UseHsts();
 }
-app.UseAuthentication();
+
 app.UseWebApiConfig();
+
 app.Run();
