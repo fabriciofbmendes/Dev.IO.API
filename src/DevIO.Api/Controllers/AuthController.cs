@@ -21,7 +21,7 @@ namespace DevIO.Api.Controllers
         public AuthController(INotificador notificador, 
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
-            IOptions<AppSettings> appSettings) : base(notificador)
+            IOptions<AppSettings> appSettings,IUser user) : base(notificador,user)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -68,6 +68,13 @@ namespace DevIO.Api.Controllers
             }
             NotificarErro("Usuario ou Senha incorretos");
             return CustomResponse(loginUser);
+        }
+
+        [HttpPost("sair")]
+        public async Task<ActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return Ok();
         }
 
         private async Task<LoginResponseViewModel> GerarJwt(string email)

@@ -22,6 +22,16 @@ export class UserService extends BaseService {
             );
     }
 
+    logout(): Observable<User> {
+
+        return this.http
+            .post(this.UrlServiceV1 + 'sair', super.ObterHeaderJson())
+            .pipe(
+                map(super.extractData),
+                catchError(super.serviceError)
+            );
+    }
+
     persistirUserApp(response: any){
         localStorage.setItem('app.token', response.accessToken);
         localStorage.setItem('app.user', JSON.stringify(response.userToken));

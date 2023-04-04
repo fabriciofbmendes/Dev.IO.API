@@ -23,6 +23,7 @@ export abstract class BaseService {
         };
     }
 
+    
     protected ObterAuthHeaderJson(){
         return {
             headers: new HttpHeaders({

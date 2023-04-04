@@ -11,6 +11,11 @@ export class MenuUserComponent {
 
   constructor(private userService: UserService) {  }
 
+  logout() {
+    this.userService.logout();
+    return true;
+  }
+
   userLogado(): boolean {
     var user = this.userService.obterUsuario();
     if (user) {
