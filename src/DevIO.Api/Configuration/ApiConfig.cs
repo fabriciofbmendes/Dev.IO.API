@@ -7,13 +7,25 @@ namespace DevIO.Api.Configuration
     {
         public static IServiceCollection AddWebApiConfig(this IServiceCollection services)
         {
+            services.AddApiVersioning(options =>
+            {
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.DefaultApiVersion = new ApiVersion(2, 0);
+                options.ReportApiVersions = true;
+            });
+
+            services.AddVersionedApiExplorer(options =>
+            {
+                options.GroupNameFormat = "'v'VVV";
+                options.SubstituteApiVersionInUrl = true;
+            });
 
             services.AddControllers();
 
             services.AddCors(options =>
             {
                 options.AddPolicy("Development",
-                    builder => builder.AllowAnyOrigin()
+                    builder => builder.WithOrigins("http://desenvolvedor.io")
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials());

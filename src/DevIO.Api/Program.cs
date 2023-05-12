@@ -1,6 +1,9 @@
 using DevIO.Api.Configuration;
 using DevIO.Data.Context;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.Swagger;
+using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +17,7 @@ builder.Services.AddIdentityConfiguration(builder.Configuration);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddWebApiConfig();
+builder.Services.AddSwaggerConfig();
 
 builder.Services.AddCors(options =>
 {
@@ -40,5 +44,8 @@ else
 }
 
 app.UseWebApiConfig();
+
+var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+app.UseSwaggerConfig(provider);
 
 app.Run();
