@@ -30,7 +30,7 @@
     "IIS - Prod": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "swagger",
+      "launchUrl": "api/v1/fornecedores",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Production"
       }

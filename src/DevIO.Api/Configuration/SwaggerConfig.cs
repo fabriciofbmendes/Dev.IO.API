@@ -12,9 +12,35 @@ namespace DevIO.Api.Configuration
     {
         public static IServiceCollection AddSwaggerConfig(this IServiceCollection services)
         {
+
             services.AddSwaggerGen(c =>
             {
                 c.OperationFilter<SwaggerDefaultValues>();
+
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "Insira o token JWT desta ,maneira : Bearer {seu token}",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    BearerFormat = "JWT",
+                    Scheme = "Bearer"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type=ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[]{}
+                    }
+                });
             });
 
 
@@ -23,6 +49,7 @@ namespace DevIO.Api.Configuration
 
         public static IApplicationBuilder UseSwaggerConfig(this IApplicationBuilder app,IApiVersionDescriptionProvider provider)
         {
+            app.UseMiddleware<SwaggerAuthorizedMiddleware>();
             app.UseSwagger();
             app.UseSwaggerUI(
                 options =>
@@ -32,6 +59,8 @@ namespace DevIO.Api.Configuration
                         options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
                     }
                 });
+
+            
             return app;
         }
     }
@@ -59,9 +88,8 @@ namespace DevIO.Api.Configuration
                 Description = "Esta API faz parte do curso REST com ASP.NET Core WebAPI.",
                 Contact = new OpenApiContact() { Name ="Fabricio Mendes", Email = "fabriciofbmendes7@gmail.com"},
                 TermsOfService = new Uri("https://opensource.org/licenses/MIT"),
-                License = new OpenApiLicense() { Name = "MIT",Url = new Uri("https://opensource.org/licenses/MIT")}
+                License = new OpenApiLicense() { Name = "MIT",Url = new Uri("https://opensource.org/licenses/MIT")},
             };
-
             if (description.IsDeprecated)
             {
                 info.Description += " Esta versão está obsoelta!";
@@ -77,7 +105,6 @@ namespace DevIO.Api.Configuration
             var apiDescription = context.ApiDescription;
 
             operation.Deprecated = apiDescription.IsDeprecated();
-
             if(operation.Parameters == null)
             {
                 return;
@@ -86,7 +113,6 @@ namespace DevIO.Api.Configuration
             foreach(var parameter in operation.Parameters)
             {
                 var description = apiDescription.ParameterDescriptions.First(p=>p.Name == parameter.Name);
-
                 if(parameter.Description == null)
                 {
                     parameter.Description = description.ModelMetadata?.Description;
@@ -94,6 +120,28 @@ namespace DevIO.Api.Configuration
 
                 parameter.Required |= description.IsRequired;
             }
+        }
+    }
+
+    public class SwaggerAuthorizedMiddleware
+    {
+        private readonly RequestDelegate _next;
+
+        public SwaggerAuthorizedMiddleware(RequestDelegate next)
+        {
+            _next = next;
+        }
+
+        public async Task Invoke(HttpContext context)
+        {
+
+            if (context.Request.Path.StartsWithSegments("/swagger") && !Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT").Equals("Development"))
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                return;
+            }
+
+            await _next.Invoke(context);
         }
     }
 
