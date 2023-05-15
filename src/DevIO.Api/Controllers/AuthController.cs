@@ -18,15 +18,17 @@ namespace DevIO.Api.Controllers
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly AppSettings _appSettings;
+        private readonly ILogger _logger;
 
-        public AuthController(INotificador notificador, 
+        public AuthController(INotificador notificador,
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
-            IOptions<AppSettings> appSettings,IUser user) : base(notificador,user)
+            IOptions<AppSettings> appSettings, IUser user, ILogger<AuthController> logger) : base(notificador, user)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _appSettings = appSettings.Value;
+            _logger = logger;
         }
         [HttpPost("nova-conta")]
         public async Task<ActionResult> Registrar(RegisterUserViewModel registerUser)
@@ -60,7 +62,7 @@ namespace DevIO.Api.Controllers
 
             if (result.Succeeded)
             {
-                return CustomResponse(await GerarJwt(loginUser.Email));
+                return CustomResponse(await GerarJwt(loginUser.Email)); 
             }
             if (result.IsLockedOut)
             {
